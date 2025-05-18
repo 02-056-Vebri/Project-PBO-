@@ -1,13 +1,19 @@
 import pygame
 import random
+import sys
 import cursor
 import base
 import text
 from health_bar import BarHp
+from character.cancer import cancer
+from character.player import PlayerMain
 
 
-# Inisialisasi pygame
+# Inisialisasi pygame and screen globally for use in functions
 pygame.init()
+screen = pygame.display.set_mode((1000, 600))
+pygame.display.set_caption("Game skill energy demo")
+pygame.mouse.set_visible(False)
 
 #menyembunyikan kursor mouse agar yang bergerak hanya gambar menu_cursor.png
 pygame.mouse.set_visible(False)
@@ -18,6 +24,8 @@ battle_log = ""
 # Posisi awal kursor,kursor awalnya diletakan di luar screen agar tidak terlihat
 cursor_x = -40
 cursor_y = +40
+base_structure = 1
+selected_mode = None
 
 # Ukuran layar utama
 screen = pygame.display.set_mode((1000, 600))
@@ -230,6 +238,11 @@ class CancerHunter():
         text_cancer_size = pygame.transform.scale(text_cancer,(300,300))
         screen.blit(text_cancer_size,(700,0))
 
+        ## Menampilkan teks "Attack", "Guard", dan "Skill" di layar pada posisi tertentu dengan ukuran font 50 dan menyimpan area teksnya untuk deteksi interaksi.
+        attack_rect = text.font("Attack", screen, 400, 550, 50)
+        guard_rect = text.font("Guard", screen, 600, 550, 50)
+        skill_rect = text.font("Skill", screen, 800, 550, 50)
+
 
         base.Cancer.cancer_image(screen)
 
@@ -301,8 +314,11 @@ class CancerHunter():
 
 
 # Loop utama game
-clock = pygame.time.Clock()
-
+def main():
+    global cursor_x, cursor_y, base_structure, selected_mode
+    
+    clock = pygame.time.Clock()
+    done = false
 
 while True :
     base_structure = 1  # kembali ke menu
@@ -343,3 +359,8 @@ while True :
         # Update layar
         pygame.display.flip()
         clock.tick(30)
+
+# Check if this file is being run directly (not imported as a module)
+if __name__ == "__main__":
+    # If yes, then call the main() function
+    main()
