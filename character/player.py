@@ -1,5 +1,70 @@
-from character.base import BaseChar
+from character.base import BaseCharimport random
 import pygame
+import basic_attack
+
+class PlayerMain(Player):
+    def __init__(self, name):
+        super().__init__(name)
+        # definisi energy cost tiap skill
+        self.skill_energy_cost = {
+            "basic_attack": 20,
+            "special_attack": 50,
+        }
+
+    @staticmethod
+    def player_image(screen):
+        player_image = pygame.image.load("assets/player_image.png")
+        player_image_size = pygame.transform.scale(player_image, (200, 200))
+        screen.blit(player_image_size, (10, 400))
+
+    def level_up(self):
+        self.set_level(self.get_level() + 1)
+        self.set_attack(self.get_attack() + 5)
+        self.set_defense(self.get_defense() + 5)
+        self.set_hp(self.get_hp() + 5)
+        self.set_max_hp(self.get_max_hp() + 5)
+        self.set_max_energy(self.get_max_energy() + 10)  # tambah max energy saat level up
+        self.set_energy(self.get_max_energy())  # isi energi penuh saat level up
+        print(f"{self.get_name()} has leveled up to level {self.get_level()}!")
+
+    def use_skill(self, skill_name, target, screen):
+        if skill_name not in self.skill_energy_cost:
+            print("Skill tidak dikenal.")
+            return False
+
+        cost = self.skill_energy_cost[skill_name]
+        if self.get_energy() < cost:
+            print(f"Energi tidak cukup untuk menggunakan skill {skill_name}.")
+            return False
+
+        # Kurangi energi
+        self.set_energy(self.get_energy() - cost)
+
+        # Eksekusi efek skill
+        if skill_name == "basic_attack":
+            basic_attack.attack_animation(screen)
+            damage = random.randint(self.get_attack() - 2, self.get_attack() + 2)
+            print(f"{self.get_name()} uses {skill_name} on {target.get_name()} for {damage} damage!")
+            target.set_hp(target.get_hp() - damage)
+            return True
+
+        elif skill_name == "special_attack":
+            damage = random.randint(self.get_attack(), self.get_attack() + 10)
+            print(f"{self.get_name()} uses {skill_name} on {target.get_name()} for {damage} damage!")
+            target.set_hp(target.get_hp() - damage)
+            return True
+
+        return False
+
+class PlayerMain(Player):
+    def __init__(self, name):
+        super().__init__(name)
+        # definisi energy cost tiap skill
+        self.skill_energy_cost = {
+            "basic_attack": 20,
+            "special_attack": 50,
+        }
+        
 class PlayerMain(BaseChar) :
     def __init__(self, name):
         super().__init__(name, 1, 100, 10, 10)  # Set initial values for player
